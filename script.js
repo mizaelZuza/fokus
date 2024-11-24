@@ -15,18 +15,18 @@ const musicaIniciar = new Audio("./sons/play.wav");
 const musicaPausar = new Audio("./sons/pause.mp3");
 const musicaFim = new Audio("./sons/beep.mp3");
 
- 
+
 let tempoDecorridoEmSegundos = 5;
 let intervaloId = null;
-const temporizadorFoco = 1500;
+const temporizadorFoco = 90;
 const temporizadorDescansoCurto = 300;
 const temporizadorDescansoLongo = 900;
 
 musica.loop = true;
 musicaFocoInput.addEventListener("change", () => {
-    if(musica.paused){
+    if (musica.paused) {
         musica.play();
-    }else{
+    } else {
         musica.pause();
     }
 })
@@ -52,8 +52,8 @@ function modoFoco() {
     });
 }
 
-function alterarContexto(contexto){
-    botoes.forEach(function (contexto){
+function alterarContexto(contexto) {
+    botoes.forEach(function (contexto) {
         contexto.classList.remove("active");
     });
     mostrarTempo();
@@ -77,20 +77,25 @@ function alterarContexto(contexto){
 }
 
 const contagemRegressiva = () => {
-    if(tempoDecorridoEmSegundos <= 0) {
+    if (tempoDecorridoEmSegundos <= 0) {
         musicaFim.play();
         alert("Tempo finalizado!");
+        const focoAtivo = html.getAttribute("data-contexto") == "foco";
+        if (focoAtivo) {
+            const evento = new CustomEvent("FocoFinalizado")
+            document.dispatchEvent(evento);
+        }
         zerar();
         return;
-    }    
+    }
     tempoDecorridoEmSegundos -= 1;
     mostrarTempo();
 };
 
 startPauseBt.addEventListener("click", iniciarOuPausar);
 
-function iniciarOuPausar (){
-    if(intervaloId){
+function iniciarOuPausar() {
+    if (intervaloId) {
         zerar()
         musicaPausar.play();
 
@@ -99,19 +104,19 @@ function iniciarOuPausar (){
     musicaIniciar.play();
     intervaloId = setInterval(contagemRegressiva, 1000);
     imgPausarOuComecar.setAttribute("src", "/imagens/pause.png");
-    iniciarOuPausarBt.textContent= "Pausar";
+    iniciarOuPausarBt.textContent = "Pausar";
 }
 
-function zerar(){
+function zerar() {
     clearInterval(intervaloId);
     iniciarOuPausarBt.textContent = "Começar";
     imgPausarOuComecar.setAttribute("src", "/imagens/play_arrow.png");
     intervaloId = null;
 }
 
-function mostrarTempo(){
+function mostrarTempo() {
     const tempo = new Date(tempoDecorridoEmSegundos * 1000);
-    const tempoFormatado = tempo.toLocaleTimeString("pt-br", {minute: "2-digit", second: "2-digit"});
+    const tempoFormatado = tempo.toLocaleTimeString("pt-br", { minute: "2-digit", second: "2-digit" });
     tempoNaTela.innerHTML = `${tempoFormatado}`;
 }
 

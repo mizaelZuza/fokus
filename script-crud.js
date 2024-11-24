@@ -2,7 +2,14 @@ const btnAdicionarTarefa = document.querySelector(".app__button--add-task");
 const formularioAdicionarTarefa = document.querySelector(".app__form-add-task");
 const textarea = document.querySelector(".app__form-textarea");
 const ulTarefas = document.querySelector(".app__section-task-list");
+const descricaoDaTarefa = document.querySelector(".app__section-active-task-description");
 let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
+let tarefaSelecionada = null;
+let liDaTarefaSelecionada = null;
+
+function atualizarTarefas() {
+    localStorage.setItem("tarefas", JSON.stringify(tarefas));
+}
 
 function criarListaDeTarefas(tarefa) {
     const li = document.createElement("li");
@@ -23,9 +30,39 @@ function criarListaDeTarefas(tarefa) {
     imagemDoBotao.setAttribute("src", "/imagens/edit.png");
     botao.append(imagemDoBotao);
 
+    botao.onclick = () => {
+        let novaDescricao = prompt("Informe a nova terefa:");
+        if (novaDescricao) {
+            paragrafo.textContent = novaDescricao;
+            tarefa.descricao = novaDescricao;
+            atualizarTarefas();
+        }
+    }
+
     li.append(svg);
     li.append(paragrafo);
     li.append(botao);
+
+    li.onclick = () => {
+
+        descricaoDaTarefa.textContent = tarefa.descricao;
+
+        document.querySelectorAll(".app__section-task-list-item-active").forEach(elemento => {
+            elemento.classList.remove("app__section-task-list-item-active");
+        })
+
+        if (tarefaSelecionada == tarefa) {
+            descricaoDaTarefa.textContent = "";
+            tarefaSelecionada = null;
+            liDaTarefaSelecionada = null;
+            return;
+        }
+
+        tarefaSelecionada = tarefa;
+        liDaTarefaSelecionada = li;
+        li.classList.add("app__section-task-list-item-active");
+
+    }
 
     return li;
 }
@@ -42,7 +79,7 @@ formularioAdicionarTarefa.addEventListener("submit", (evento) => {
     tarefas.push(tarefa);
     const elementoTarefa = criarListaDeTarefas(tarefa);
     ulTarefas.append(elementoTarefa);
-    localStorage.setItem("tarefas", JSON.stringify(tarefas));
+    atualizarTarefas();
     textarea.value = "";
     formularioAdicionarTarefa.classList.toggle("hidden");
 })
@@ -51,3 +88,12 @@ tarefas.forEach(tarefa => {
     const elementoTarefa = criarListaDeTarefas(tarefa);
     ulTarefas.append(elementoTarefa);
 });
+
+document.addEventListener("FocoFinalizado", () => {
+    if (tarefaSelecionada) {
+        liDaTarefaSelecionada.classList.remove("app__section-task-list-item-active");
+        liDaTarefaSelecionada.classList.add("app__section-task-list-item-complete");
+        liDaTarefaSelecionada.querySelector("button").setAttribute("disabled", "disabled");
+    }
+
+})
