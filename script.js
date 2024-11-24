@@ -15,7 +15,7 @@ const musicaIniciar = new Audio("./sons/play.wav");
 const musicaPausar = new Audio("./sons/pause.mp3");
 const musicaFim = new Audio("./sons/beep.mp3");
 
-const temporizadorFoco = 30;
+const temporizadorFoco = 45000;
 const temporizadorDescansoCurto = 300;
 const temporizadorDescansoLongo = 900;
 let tempoDecorridoEmSegundos = temporizadorFoco;
