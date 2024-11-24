@@ -15,12 +15,12 @@ const musicaIniciar = new Audio("./sons/play.wav");
 const musicaPausar = new Audio("./sons/pause.mp3");
 const musicaFim = new Audio("./sons/beep.mp3");
 
-
-let tempoDecorridoEmSegundos = 5;
-let intervaloId = null;
-const temporizadorFoco = 90;
+const temporizadorFoco = 30;
 const temporizadorDescansoCurto = 300;
 const temporizadorDescansoLongo = 900;
+let tempoDecorridoEmSegundos = temporizadorFoco;
+let intervaloId = null;
+
 
 musica.loop = true;
 musicaFocoInput.addEventListener("change", () => {
@@ -80,12 +80,13 @@ const contagemRegressiva = () => {
     if (tempoDecorridoEmSegundos <= 0) {
         musicaFim.play();
         alert("Tempo finalizado!");
+        zerar();
         const focoAtivo = html.getAttribute("data-contexto") == "foco";
         if (focoAtivo) {
             const evento = new CustomEvent("FocoFinalizado")
             document.dispatchEvent(evento);
         }
-        zerar();
+
         return;
     }
     tempoDecorridoEmSegundos -= 1;
